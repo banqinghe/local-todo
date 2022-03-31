@@ -52,6 +52,7 @@ declare module 'react' {
     pointer?: string;
     resize?: string;
     select?: string;
+    selection?: string;
     sr?: string;
   }
 }
