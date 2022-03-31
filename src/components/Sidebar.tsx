@@ -16,9 +16,9 @@ export default function Sidebar(props: SidebarProps) {
   return (
     <aside border="r-1 dark:gray-700" className={className} style={style}>
       <div flex="~" justify="between" p="x-3 y-2" border="b-1">
-        <IconChecklist className="text-2xl text-bg-gray-400 cursor-pointer" />
+        <IconChecklist className="text-2xl text-gray-600 cursor-pointer" />
         <Link to="new">
-          <IconPlus className="text-2xl text-bg-gray-400 rounded-1/2 cursor-pointer hover:bg-gray-100" />
+          <IconPlus className="text-2xl text-gray-600 rounded-1/2 cursor-pointer hover:bg-gray-100" />
         </Link>
       </div>
       <ul>
