@@ -3,15 +3,22 @@ import { IconCheckboxBlank, IconCheckboxChecked, IconEdit } from '@/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CatalogContext } from '@/context';
 import { getTodo, toggleTodo } from '@/utils';
+import { IconBuild, IconLightBubble } from '@/icons';
 
-import { TodoList as TodoListType } from '@/types';
+import { TodoList as TodoListType, TodoListStore } from '@/types';
 
 interface TodoListProps {}
 
 export default function TodoList(props: TodoListProps) {
   const { updateCatalog } = useContext(CatalogContext);
 
-  const [todoList, setTodoList] = useState<TodoListType>([]);
+  // const [todoList, setTodoList] = useState<TodoListType>([]);
+  const [todo, setTodo] = useState<TodoListStore>({
+    title: '',
+    createdTime: 0,
+    modifiedTime: 0,
+    todoList: [],
+  });
 
   const navigate = useNavigate();
   const id = useParams().id;
@@ -21,14 +28,26 @@ export default function TodoList(props: TodoListProps) {
   }
 
   const handleCheckboxClick = (targetIndex: number) => {
-    setTodoList(list =>
-      list.map((item, index) => {
-        if (index === targetIndex) {
-          return { ...item, checked: !item.checked };
-        }
-        return item;
-      })
-    );
+    // setTodoList(list =>
+    //   list.map((item, index) => {
+    //     if (index === targetIndex) {
+    //       return { ...item, checked: !item.checked };
+    //     }
+    //     return item;
+    //   })
+    // );
+    setTodo(prevTodo => {
+      const prevList = prevTodo.todoList;
+      return {
+        ...prevTodo,
+        todoList: prevList.map((item, index) => {
+          if (index === targetIndex) {
+            return { ...item, checked: !item.checked };
+          }
+          return item;
+        }),
+      };
+    });
     toggleTodo(id, targetIndex);
     setTimeout(() => {
       updateCatalog();
@@ -43,7 +62,7 @@ export default function TodoList(props: TodoListProps) {
     (async () => {
       const todoListStore = await getTodo(id);
       if (todoListStore) {
-        setTodoList(todoListStore.todoList);
+        setTodo(todoListStore);
       }
     })();
   }, [id]);
@@ -56,7 +75,22 @@ export default function TodoList(props: TodoListProps) {
         </div>
       </div>
       <div w="8/12" m="x-auto" p="y-6" space="y-3">
-        {todoList.map(({ content, checked }, index) => (
+        <div m="b-6" p="x-2">
+          <h1 m="b-3" text="2xl" font="bold">
+            {todo.title}
+          </h1>
+          <div flex="~ gap-4" text="xs gray-500">
+            <div flex="~ gap-1" align="items-center">
+              <IconLightBubble className="text-xs" />
+              Created at {new Date(todo.createdTime).toLocaleString()}
+            </div>
+            <div flex="~ gap-1" align="items-center">
+              <IconBuild className="text-xs text-gray-400" />
+              Updated at {new Date(todo.modifiedTime).toLocaleString()}
+            </div>
+          </div>
+        </div>
+        {todo.todoList.map(({ content, checked }, index) => (
           <div
             key={index}
             flex="~ gap-3"
