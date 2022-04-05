@@ -4,6 +4,7 @@ export { default as IconCheckboxChecked } from './IconCheckboxChecked';
 export { default as IconChecklist } from './IconChecklist';
 export { default as IconEdit } from './IconEdit';
 export { default as IconDark } from './IconDark';
+export { default as IconDelete } from './IconDelete';
 export { default as IconLight } from './IconLight';
 export { default as IconLightBubble } from './IconLightBubble';
 export { default as IconPlus } from './IconPlus';

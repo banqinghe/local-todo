@@ -12,7 +12,6 @@ interface TodoListProps {}
 export default function TodoList(props: TodoListProps) {
   const { updateCatalog } = useContext(CatalogContext);
 
-  // const [todoList, setTodoList] = useState<TodoListType>([]);
   const [todo, setTodo] = useState<TodoListStore>({
     title: '',
     createdTime: 0,
@@ -28,14 +27,6 @@ export default function TodoList(props: TodoListProps) {
   }
 
   const handleCheckboxClick = (targetIndex: number) => {
-    // setTodoList(list =>
-    //   list.map((item, index) => {
-    //     if (index === targetIndex) {
-    //       return { ...item, checked: !item.checked };
-    //     }
-    //     return item;
-    //   })
-    // );
     setTodo(prevTodo => {
       const prevList = prevTodo.todoList;
       return {
@@ -68,13 +59,19 @@ export default function TodoList(props: TodoListProps) {
   }, [id]);
 
   return (
-    <div>
-      <div flex="~" justify="end" align="items-center" p="x-6 y-2" border="b-1">
+    <div position="relative">
+      <div
+        position="absolute right-3 top-1"
+        flex="~"
+        justify="end"
+        align="items-center"
+        p="x-2 y-2"
+      >
         <div title="edit" onClick={handleClickEdit}>
           <IconEdit className="text-2xl p-1 rounded cursor-pointer hover:bg-gray-100" />
         </div>
       </div>
-      <div w="8/12" m="x-auto" p="y-6" space="y-3">
+      <div w="8/12" m="x-auto" p="y-5" space="y-3">
         <div m="b-6" p="x-2">
           <h1 m="b-3" text="2xl" font="bold">
             {todo.title}

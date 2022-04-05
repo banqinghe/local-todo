@@ -28,7 +28,7 @@ export default function App() {
       <Header />
       <div flex="~ 1" style={{ height: 'calc(100vh - 53px)' }}>
         <CatalogContext.Provider value={{ catalog, updateCatalog }}>
-          <Sidebar className="min-w-52" />
+          <Sidebar className="w-52" />
           <Todo className="flex-1 h-full" />
         </CatalogContext.Provider>
       </div>

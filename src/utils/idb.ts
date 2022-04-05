@@ -1,8 +1,10 @@
-import { get, set, update } from 'idb-keyval';
+import { get, set, update, del } from 'idb-keyval';
 import { Catalog, TodoListStore } from '@/types';
 
 const todoPrefix = 'TODO_';
 const todoInfoListKey = 'TODO_INFO_LIST';
+
+const todoRecycleListKey = 'TODO_RECYCLE_INFO_LIST';
 
 function updateCatalog(
   createdTime: number,
@@ -84,6 +86,34 @@ export function modifyTodo(id: string, title: string, todoList: string[]) {
     return newTodo;
   });
   updateCatalog(createdTime, modifiedTime, title, false);
+}
+
+/**
+ * Delete a todo, move todo info to recycle list
+ */
+export function deleteTodo(id: string) {
+  // append to todo recycle list
+  get(todoPrefix + id).then(todo => {
+    const recycleTodoInfo = {
+      title: todo.title,
+      createdTime: todo.createdTime,
+      modifiedTime: todo.modifiedTime,
+    };
+    update<Catalog>(todoRecycleListKey, prevInfoList => {
+      if (!prevInfoList) {
+        return [recycleTodoInfo];
+      }
+      return [...prevInfoList, recycleTodoInfo];
+    });
+  });
+
+  // delete info from todo info list
+  update<Catalog>(todoInfoListKey, prevInfoList => {
+    if (!prevInfoList) {
+      return [];
+    }
+    return prevInfoList.filter(info => info.createdTime !== Number(id));
+  });
 }
 
 /**
