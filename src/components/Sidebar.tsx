@@ -174,7 +174,7 @@ export default function Sidebar(props: SidebarProps) {
       )}
       <ul overflow="auto" className="thin-scrollbar">
         {showType === 'todo'
-          ? sidebarInfo.todoInfoList.map(item => (
+          ? sidebarInfo.todoInfoList?.map(item => (
               <TodoInfoListItem
                 key={item.createdTime}
                 info={item}
@@ -182,7 +182,7 @@ export default function Sidebar(props: SidebarProps) {
                 handleDelete={handleDelete}
               />
             ))
-          : sidebarInfo.todoRecycleList.map(item => (
+          : sidebarInfo.todoRecycleList?.map(item => (
               <TodoRecycleListItem
                 key={item.createdTime}
                 info={item}

@@ -179,8 +179,12 @@ export function getRecycleBinList() {
 }
 
 /** Get both todo info list and recycle list */
-export function getSidebarInfo() {
-  return getMany<Catalog>([todoInfoListKey, todoRecycleListKey]);
+export async function getSidebarInfo() {
+  const [todoInfoList, todoRecycleList] = await getMany<Catalog>([
+    todoInfoListKey,
+    todoRecycleListKey,
+  ]);
+  return [todoInfoList ?? [], todoRecycleList ?? []];
 }
 
 /** Restore todo */
