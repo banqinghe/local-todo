@@ -1,10 +1,10 @@
 import React from 'react';
-import { Catalog } from './types';
+import { Catalog, SidebarInfo } from './types';
 
 export const CatalogContext = React.createContext<{
-  catalog: Catalog;
+  sidebarInfo: SidebarInfo;
   updateCatalog: () => void;
 }>({
-  catalog: [],
+  sidebarInfo: { todoInfoList: [], todoRecycleList: [] },
   updateCatalog: () => {},
 });

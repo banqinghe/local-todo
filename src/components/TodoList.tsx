@@ -71,12 +71,12 @@ export default function TodoList(props: TodoListProps) {
           <IconEdit className="text-2xl p-1 rounded cursor-pointer hover:bg-gray-100" />
         </div>
       </div>
-      <div w="8/12" m="x-auto" p="y-5" space="y-3">
+      <div w="11/12 md:8/12" m="x-auto" p="y-5" space="y-3">
         <div m="b-6" p="x-2">
           <h1 m="b-3" text="2xl" font="bold">
             {todo.title}
           </h1>
-          <div flex="~ gap-4" text="xs gray-500">
+          <div flex="~ col gap-2 lg:row lg:gap-4" text="xs gray-500">
             <div flex="~ gap-1" align="items-center">
               <IconLightBubble className="text-xs" />
               Created at {new Date(todo.createdTime).toLocaleString()}

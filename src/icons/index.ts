@@ -8,4 +8,5 @@ export { default as IconDelete } from './IconDelete';
 export { default as IconLight } from './IconLight';
 export { default as IconLightBubble } from './IconLightBubble';
 export { default as IconPlus } from './IconPlus';
+export { default as IconRestore } from './IconRestore';
 export { default as IconSave } from './IconSave';

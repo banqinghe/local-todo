@@ -1,4 +1,4 @@
-import { get, set, update, del } from 'idb-keyval';
+import { get, set, update, delMany, getMany } from 'idb-keyval';
 import { Catalog, TodoListStore } from '@/types';
 
 const todoPrefix = 'TODO_';
@@ -103,7 +103,16 @@ export function deleteTodo(id: string) {
       if (!prevInfoList) {
         return [recycleTodoInfo];
       }
-      return [...prevInfoList, recycleTodoInfo];
+      const newInfoList =
+        prevInfoList.length > 9
+          ? [recycleTodoInfo, ...prevInfoList.slice(0, 9)]
+          : [recycleTodoInfo, ...prevInfoList];
+      delMany([
+        prevInfoList
+          .slice(9)
+          .map(info => todoPrefix + info.createdTime.toString()),
+      ]);
+      return newInfoList;
     });
   });
 
@@ -162,4 +171,31 @@ export function toggleTodo(id: string, targetIndex: number) {
  */
 export function getCatalog() {
   return get<Catalog>(todoInfoListKey);
+}
+
+/** Get recycle bin list */
+export function getRecycleBinList() {
+  return get<Catalog>(todoRecycleListKey);
+}
+
+/** Get both todo info list and recycle list */
+export function getSidebarInfo() {
+  return getMany<Catalog>([todoInfoListKey, todoRecycleListKey]);
+}
+
+/** Restore todo */
+export function restoreTodo(id: string) {
+  update<Catalog>(todoRecycleListKey, prevInfoList => {
+    if (!prevInfoList) {
+      return [];
+    }
+    return prevInfoList.filter(info => info.createdTime !== Number(id));
+  });
+  get<TodoListStore>(todoPrefix + id).then(todo => {
+    if (!todo) {
+      return;
+    }
+    const { createdTime, modifiedTime, title } = todo;
+    updateCatalog(createdTime, modifiedTime, title, true);
+  });
 }

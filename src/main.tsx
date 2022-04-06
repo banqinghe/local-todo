@@ -4,6 +4,7 @@ import App from './App';
 import { HashRouter } from 'react-router-dom';
 
 import 'virtual:windi.css';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>

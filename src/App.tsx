@@ -2,15 +2,23 @@ import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Todo from '@/components/Todo';
-import { getCatalog } from '@/utils';
+import { getSidebarInfo } from '@/utils';
 import { Catalog } from '@/types';
 import { CatalogContext } from '@/context';
 
 export default function App() {
-  const [catalog, setCatalog] = useState<Catalog>([]);
+  const [sidebarInfo, setSidebarInfo] = useState<{
+    todoInfoList: Catalog;
+    todoRecycleList: Catalog;
+  }>({
+    todoInfoList: [],
+    todoRecycleList: [],
+  });
 
   const updateCatalog = () => {
-    getCatalog().then(catalog => setCatalog(catalog || []));
+    getSidebarInfo().then(([todoInfoList, todoRecycleList]) => {
+      setSidebarInfo({ todoInfoList, todoRecycleList });
+    });
   };
 
   useEffect(() => {
@@ -27,8 +35,8 @@ export default function App() {
     >
       <Header />
       <div flex="~ 1" style={{ height: 'calc(100vh - 53px)' }}>
-        <CatalogContext.Provider value={{ catalog, updateCatalog }}>
-          <Sidebar className="w-52" />
+        <CatalogContext.Provider value={{ sidebarInfo, updateCatalog }}>
+          <Sidebar className="hidden md:flex md:w-42 lg:w-52" />
           <Todo className="flex-1 h-full" />
         </CatalogContext.Provider>
       </div>

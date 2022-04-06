@@ -5,6 +5,11 @@ export type CatalogItem = {
 };
 export type Catalog = CatalogItem[];
 
+export type SidebarInfo = {
+  todoInfoList: Catalog;
+  todoRecycleList: Catalog;
+};
+
 export type TodoItem = { content: string; checked: boolean };
 export type TodoList = TodoItem[];
 
