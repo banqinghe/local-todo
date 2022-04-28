@@ -1,21 +1,18 @@
-export type CatalogItem = {
+export type TodoBrief = {
   title: string;
   createdTime: number;
   modifiedTime: number;
 };
-export type Catalog = CatalogItem[];
+export type TodoBriefList = TodoBrief[];
 
 export type SidebarInfo = {
-  todoInfoList: Catalog;
-  todoRecycleList: Catalog;
+  todoInfoList: TodoBriefList;
+  todoRecycleList: TodoBriefList;
 };
 
 export type TodoItem = { content: string; checked: boolean };
 export type TodoList = TodoItem[];
 
-export type TodoListStore = {
-  title: string;
-  createdTime: number;
-  modifiedTime: number;
+export type Todo = {
   todoList: TodoList;
-};
+} & TodoBrief;

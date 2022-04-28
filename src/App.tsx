@@ -3,13 +3,13 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Todo from '@/components/Todo';
 import { getSidebarInfo } from '@/utils';
-import { Catalog } from '@/types';
+import { TodoBriefList } from '@/types';
 import { CatalogContext } from '@/context';
 
 export default function App() {
   const [sidebarInfo, setSidebarInfo] = useState<{
-    todoInfoList: Catalog;
-    todoRecycleList: Catalog;
+    todoInfoList: TodoBriefList;
+    todoRecycleList: TodoBriefList;
   }>({
     todoInfoList: [],
     todoRecycleList: [],

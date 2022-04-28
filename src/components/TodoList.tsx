@@ -5,14 +5,14 @@ import { CatalogContext } from '@/context';
 import { getTodo, toggleTodo } from '@/utils';
 import { IconBuild, IconLightBubble } from '@/icons';
 
-import { TodoList as TodoListType, TodoListStore } from '@/types';
+import { Todo } from '@/types';
 
 interface TodoListProps {}
 
 export default function TodoList(props: TodoListProps) {
   const { updateCatalog } = useContext(CatalogContext);
 
-  const [todo, setTodo] = useState<TodoListStore>({
+  const [todo, setTodo] = useState<Todo>({
     title: '',
     createdTime: 0,
     modifiedTime: 0,

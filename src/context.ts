@@ -1,5 +1,5 @@
 import React from 'react';
-import { Catalog, SidebarInfo } from './types';
+import { SidebarInfo } from './types';
 
 export const CatalogContext = React.createContext<{
   sidebarInfo: SidebarInfo;

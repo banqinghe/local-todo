@@ -4,18 +4,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { CatalogContext } from '@/context';
 import { deleteTodo, restoreTodo } from '@/utils';
 import cn from 'classnames';
-import { CatalogItem } from '@/types';
-
-// const fakeData: Catalog = Array.from({ length: 20 }, (_, index) => {
-//   return {
-//     title: 'title ' + index,
-//     createdTime: index + Date.now(),
-//     modifiedTime: index + Date.now(),
-//   };
-// });
+import { TodoBrief } from '@/types';
 
 interface TodoInfoListItemProps {
-  info: CatalogItem;
+  info: TodoBrief;
   activeKey: string;
   handleDelete: (id: string) => void;
 }
@@ -62,7 +54,7 @@ function TodoInfoListItem(props: TodoInfoListItemProps) {
 }
 
 interface TodoRecycleListItemProps {
-  info: CatalogItem;
+  info: TodoBrief;
   handleRestore: (id: string) => void;
 }
 

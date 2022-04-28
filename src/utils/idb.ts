@@ -1,5 +1,5 @@
 import { get, set, update, delMany, getMany } from 'idb-keyval';
-import { Catalog, TodoListStore } from '@/types';
+import { TodoBriefList, Todo } from '@/types';
 
 const todoPrefix = 'TODO_';
 const todoInfoListKey = 'TODO_INFO_LIST';
@@ -12,7 +12,7 @@ function updateCatalog(
   title: string,
   isAdd: boolean
 ) {
-  update<Catalog>(todoInfoListKey, prevInfoList => {
+  update<TodoBriefList>(todoInfoListKey, prevInfoList => {
     if (prevInfoList === undefined) {
       return isAdd ? [{ createdTime, modifiedTime: createdTime, title }] : [];
     }
@@ -55,7 +55,7 @@ export function saveTodo(
 export function modifyTodo(id: string, title: string, todoList: string[]) {
   const createdTime = Number(id);
   const modifiedTime = Date.now();
-  update<TodoListStore>(todoPrefix + createdTime, prevStore => {
+  update<Todo>(todoPrefix + createdTime, prevStore => {
     if (prevStore === undefined) {
       return {
         title,
@@ -99,7 +99,7 @@ export function deleteTodo(id: string) {
       createdTime: todo.createdTime,
       modifiedTime: todo.modifiedTime,
     };
-    update<Catalog>(todoRecycleListKey, prevInfoList => {
+    update<TodoBriefList>(todoRecycleListKey, prevInfoList => {
       if (!prevInfoList) {
         return [recycleTodoInfo];
       }
@@ -117,7 +117,7 @@ export function deleteTodo(id: string) {
   });
 
   // delete info from todo info list
-  update<Catalog>(todoInfoListKey, prevInfoList => {
+  update<TodoBriefList>(todoInfoListKey, prevInfoList => {
     if (!prevInfoList) {
       return [];
     }
@@ -129,7 +129,7 @@ export function deleteTodo(id: string) {
  * Get todo list by id
  */
 export function getTodo(id: string) {
-  return get<TodoListStore>(todoPrefix + id);
+  return get<Todo>(todoPrefix + id);
 }
 
 /**
@@ -137,7 +137,7 @@ export function getTodo(id: string) {
  */
 export function toggleTodo(id: string, targetIndex: number) {
   let title = '';
-  update<TodoListStore>(todoPrefix + id, prevStore => {
+  update<Todo>(todoPrefix + id, prevStore => {
     if (prevStore === undefined) {
       return {
         title,
@@ -170,17 +170,17 @@ export function toggleTodo(id: string, targetIndex: number) {
  * Get catalog
  */
 export function getCatalog() {
-  return get<Catalog>(todoInfoListKey);
+  return get<TodoBriefList>(todoInfoListKey);
 }
 
 /** Get recycle bin list */
 export function getRecycleBinList() {
-  return get<Catalog>(todoRecycleListKey);
+  return get<TodoBriefList>(todoRecycleListKey);
 }
 
 /** Get both todo info list and recycle list */
 export async function getSidebarInfo() {
-  const [todoInfoList, todoRecycleList] = await getMany<Catalog>([
+  const [todoInfoList, todoRecycleList] = await getMany<TodoBriefList>([
     todoInfoListKey,
     todoRecycleListKey,
   ]);
@@ -189,13 +189,13 @@ export async function getSidebarInfo() {
 
 /** Restore todo */
 export function restoreTodo(id: string) {
-  update<Catalog>(todoRecycleListKey, prevInfoList => {
+  update<TodoBriefList>(todoRecycleListKey, prevInfoList => {
     if (!prevInfoList) {
       return [];
     }
     return prevInfoList.filter(info => info.createdTime !== Number(id));
   });
-  get<TodoListStore>(todoPrefix + id).then(todo => {
+  get<Todo>(todoPrefix + id).then(todo => {
     if (!todo) {
       return;
     }
