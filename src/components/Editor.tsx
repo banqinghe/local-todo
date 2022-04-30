@@ -1,7 +1,7 @@
-import { useRef, useEffect, useContext } from 'react';
+import { useRef, useEffect } from 'react';
 import { getTodo, modifyTodo, saveTodo } from '@/utils';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CatalogContext } from '@/context';
+import useUpdateSidebar from '@/hooks/useUpdateSidebar';
 import { IconSave } from '@/icons';
 
 const textareaExample = `# Title
@@ -14,7 +14,7 @@ Note: All statements not starting with '# ' or '- ' will be ignore. Title should
 `;
 
 export default function Editor() {
-  const { updateCatalog } = useContext(CatalogContext);
+  const updateSidebar = useUpdateSidebar();
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -32,16 +32,13 @@ export default function Editor() {
       .slice(1)
       .map(line => line.replace(/^-\s/, '').trim());
     if (isModify) {
-      modifyTodo(id, title, todoList);
+      modifyTodo(id, title, todoList).then(() => updateSidebar());
       navigate('/' + id);
     } else {
       const createdTime = Date.now();
-      saveTodo(createdTime, title, todoList);
+      saveTodo(createdTime, title, todoList).then(() => updateSidebar());
       navigate('/' + createdTime);
     }
-    setTimeout(() => {
-      updateCatalog();
-    }, 100);
   };
 
   const resizeTextArea = () => {

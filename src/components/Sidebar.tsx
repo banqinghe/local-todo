@@ -1,99 +1,12 @@
 import { useState, useContext } from 'react';
-import { IconPlus, IconChecklist, IconDelete, IconRestore } from '@/icons';
+import { IconPlus, IconChecklist, IconDelete } from '@/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { CatalogContext } from '@/context';
-import { deleteTodo, restoreTodo } from '@/utils';
-import cn from 'classnames';
-import { TodoBrief } from '@/types';
-
-interface TodoInfoListItemProps {
-  info: TodoBrief;
-  activeKey: string;
-  handleDelete: (id: string) => void;
-}
-
-function TodoInfoListItem(props: TodoInfoListItemProps) {
-  const { info, activeKey, handleDelete } = props;
-  return (
-    <li
-      key={info.createdTime}
-      position="relative"
-      flex="~"
-      align="items-center"
-      w="full"
-      bg="hover:light-300"
-      cursor="pointer"
-      className={cn('group', {
-        'bg-light-300 border-r-2': activeKey === info.createdTime.toString(),
-      })}
-      title={info.title}
-    >
-      <Link
-        className="w-full px-6 py-2 no-underline"
-        to={info.createdTime + ''}
-      >
-        <div text="sm gray-700 truncate" m="b-1">
-          {info.title}
-        </div>
-        <div text="gray-500 xs">
-          {new Date(info.modifiedTime).toLocaleString()}
-        </div>
-      </Link>
-      <div
-        position="absolute right-2"
-        text="gray-400 hover:gray-600"
-        title="delete"
-        display="hidden"
-        group-hover="block"
-        onClick={() => handleDelete(info.createdTime.toString())}
-      >
-        <IconDelete />
-      </div>
-    </li>
-  );
-}
-
-interface TodoRecycleListItemProps {
-  info: TodoBrief;
-  handleRestore: (id: string) => void;
-}
-
-function TodoRecycleListItem(props: TodoRecycleListItemProps) {
-  const { info, handleRestore } = props;
-  return (
-    <li
-      key={info.createdTime}
-      position="relative"
-      flex="~"
-      align="items-center"
-      w="full"
-      p="x-6 y-2"
-      bg="hover:light-300"
-      cursor="pointer"
-      title={info.title}
-      className="group"
-    >
-      <div>
-        <div text="sm gray-700 truncate" m="b-1">
-          {info.title}
-        </div>
-        <div text="gray-500 xs">
-          {new Date(info.modifiedTime).toLocaleString()}
-        </div>
-      </div>
-      <div
-        position="absolute right-2"
-        text="gray-400 hover:gray-600"
-        title="restore"
-        display="hidden"
-        group-hover="block"
-        onClick={() => handleRestore(info.createdTime.toString())}
-      >
-        <IconRestore />
-      </div>
-    </li>
-  );
-}
+import { deleteTodo, getSidebarInfo, restoreTodo } from '@/utils';
+import TodoInfoListItem from '@/components/TodoInfoListItem';
+import TodoRecycleListItem from '@/components/TodoRecycleListItem';
+import { useRecoilState } from 'recoil';
+import { sidebarInfoState } from '@/recoil/atoms';
+import useUpdateSidebar from '@/hooks/useUpdateSidebar';
 
 interface SidebarProps {
   className?: string;
@@ -103,7 +16,8 @@ interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
   const { className, style } = props;
 
-  const { sidebarInfo, updateCatalog } = useContext(CatalogContext);
+  const [sidebarInfo, setSidebarInfo] = useRecoilState(sidebarInfoState);
+  const updateSidebar = useUpdateSidebar();
 
   const [activeKey, setActiveKey] = useState<string>('');
   const [showType, setShowType] = useState<'todo' | 'recycle'>('todo');
@@ -115,17 +29,11 @@ export default function Sidebar(props: SidebarProps) {
   }
 
   const handleDelete = (id: string) => {
-    deleteTodo(id);
-    setTimeout(() => {
-      updateCatalog();
-    }, 100);
+    deleteTodo(id).then(() => updateSidebar());
   };
 
   const handleRestore = (id: string) => {
-    restoreTodo(id);
-    setTimeout(() => {
-      updateCatalog();
-    }, 100);
+    restoreTodo(id).then(() => updateSidebar());
   };
 
   const handleToggleShowType = () => {

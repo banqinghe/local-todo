@@ -1,16 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
 import { IconCheckboxBlank, IconCheckboxChecked, IconEdit } from '@/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CatalogContext } from '@/context';
 import { getTodo, toggleTodo } from '@/utils';
 import { IconBuild, IconLightBubble } from '@/icons';
 
 import { Todo } from '@/types';
+import useUpdateSidebar from '@/hooks/useUpdateSidebar';
 
-interface TodoListProps {}
-
-export default function TodoList(props: TodoListProps) {
-  const { updateCatalog } = useContext(CatalogContext);
+export default function TodoList() {
+  const updateSidebar = useUpdateSidebar();
 
   const [todo, setTodo] = useState<Todo>({
     title: '',
@@ -39,10 +37,7 @@ export default function TodoList(props: TodoListProps) {
         }),
       };
     });
-    toggleTodo(id, targetIndex);
-    setTimeout(() => {
-      updateCatalog();
-    }, 100);
+    toggleTodo(id, targetIndex).then(() => updateSidebar());
   };
 
   const handleClickEdit = () => {

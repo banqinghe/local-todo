@@ -6,13 +6,13 @@ const todoInfoListKey = 'TODO_INFO_LIST';
 
 const todoRecycleListKey = 'TODO_RECYCLE_INFO_LIST';
 
-function updateCatalog(
+function updateBriefList(
   createdTime: number,
   modifiedTime: number,
   title: string,
   isAdd: boolean
 ) {
-  update<TodoBriefList>(todoInfoListKey, prevInfoList => {
+  return update<TodoBriefList>(todoInfoListKey, prevInfoList => {
     if (prevInfoList === undefined) {
       return isAdd ? [{ createdTime, modifiedTime: createdTime, title }] : [];
     }
@@ -26,7 +26,7 @@ function updateCatalog(
         if (info.createdTime !== createdTime) {
           return info;
         }
-        return { ...info, modifiedTime: modifiedTime };
+        return { ...info, title, modifiedTime: modifiedTime };
       });
     }
   });
@@ -40,13 +40,15 @@ export function saveTodo(
   title: string,
   todoList: string[]
 ) {
-  set(todoPrefix + createdTime, {
-    title,
-    todoList: todoList.map(content => ({ checked: false, content })),
-    createdTime,
-    modifiedTime: createdTime,
-  });
-  updateCatalog(createdTime, createdTime, title, true);
+  return Promise.all([
+    set(todoPrefix + createdTime, {
+      title,
+      todoList: todoList.map(content => ({ checked: false, content })),
+      createdTime,
+      modifiedTime: createdTime,
+    }),
+    updateBriefList(createdTime, createdTime, title, true),
+  ]);
 }
 
 /**
@@ -55,37 +57,40 @@ export function saveTodo(
 export function modifyTodo(id: string, title: string, todoList: string[]) {
   const createdTime = Number(id);
   const modifiedTime = Date.now();
-  update<Todo>(todoPrefix + createdTime, prevStore => {
-    if (prevStore === undefined) {
-      return {
+
+  return Promise.all([
+    update<Todo>(todoPrefix + createdTime, prevStore => {
+      if (prevStore === undefined) {
+        return {
+          title,
+          todoList: [],
+          createdTime,
+          modifiedTime,
+        };
+      }
+
+      const prevTodoContentList = prevStore.todoList.map(todo => todo.content);
+      const newTodoList = todoList.map(content => {
+        let checked = false;
+        const prevIndex = prevTodoContentList.indexOf(content);
+        if (prevIndex >= 0) {
+          checked = prevStore.todoList[prevIndex].checked;
+        }
+        return {
+          checked,
+          content,
+        };
+      });
+      const newTodo = {
         title,
-        todoList: [],
+        todoList: newTodoList,
         createdTime,
         modifiedTime,
       };
-    }
-
-    const prevTodoContentList = prevStore.todoList.map(todo => todo.content);
-    const newTodoList = todoList.map(content => {
-      let checked = false;
-      const prevIndex = prevTodoContentList.indexOf(content);
-      if (prevIndex >= 0) {
-        checked = prevStore.todoList[prevIndex].checked;
-      }
-      return {
-        checked,
-        content,
-      };
-    });
-    const newTodo = {
-      title,
-      todoList: newTodoList,
-      createdTime,
-      modifiedTime,
-    };
-    return newTodo;
-  });
-  updateCatalog(createdTime, modifiedTime, title, false);
+      return newTodo;
+    }),
+    updateBriefList(createdTime, modifiedTime, title, false),
+  ]);
 }
 
 /**
@@ -93,36 +98,38 @@ export function modifyTodo(id: string, title: string, todoList: string[]) {
  */
 export function deleteTodo(id: string) {
   // append to todo recycle list
-  get(todoPrefix + id).then(todo => {
-    const recycleTodoInfo = {
-      title: todo.title,
-      createdTime: todo.createdTime,
-      modifiedTime: todo.modifiedTime,
-    };
-    update<TodoBriefList>(todoRecycleListKey, prevInfoList => {
-      if (!prevInfoList) {
-        return [recycleTodoInfo];
-      }
-      const newInfoList =
-        prevInfoList.length > 9
-          ? [recycleTodoInfo, ...prevInfoList.slice(0, 9)]
-          : [recycleTodoInfo, ...prevInfoList];
-      delMany([
-        prevInfoList
-          .slice(9)
-          .map(info => todoPrefix + info.createdTime.toString()),
-      ]);
-      return newInfoList;
-    });
-  });
+  return Promise.all([
+    get(todoPrefix + id).then(todo => {
+      const recycleTodoInfo = {
+        title: todo.title,
+        createdTime: todo.createdTime,
+        modifiedTime: todo.modifiedTime,
+      };
+      return update<TodoBriefList>(todoRecycleListKey, prevInfoList => {
+        if (!prevInfoList) {
+          return [recycleTodoInfo];
+        }
+        const newInfoList =
+          prevInfoList.length > 9
+            ? [recycleTodoInfo, ...prevInfoList.slice(0, 9)]
+            : [recycleTodoInfo, ...prevInfoList];
+        delMany([
+          prevInfoList
+            .slice(9)
+            .map(info => todoPrefix + info.createdTime.toString()),
+        ]);
+        return newInfoList;
+      });
+    }),
 
-  // delete info from todo info list
-  update<TodoBriefList>(todoInfoListKey, prevInfoList => {
-    if (!prevInfoList) {
-      return [];
-    }
-    return prevInfoList.filter(info => info.createdTime !== Number(id));
-  });
+    // delete info from todo info list
+    update<TodoBriefList>(todoInfoListKey, prevInfoList => {
+      if (!prevInfoList) {
+        return [];
+      }
+      return prevInfoList.filter(info => info.createdTime !== Number(id));
+    }),
+  ]);
 }
 
 /**
@@ -137,7 +144,7 @@ export function getTodo(id: string) {
  */
 export function toggleTodo(id: string, targetIndex: number) {
   let title = '';
-  update<Todo>(todoPrefix + id, prevStore => {
+  return update<Todo>(todoPrefix + id, prevStore => {
     if (prevStore === undefined) {
       return {
         title,
@@ -162,7 +169,7 @@ export function toggleTodo(id: string, targetIndex: number) {
       todoList: newTodoList,
     };
   }).then(() => {
-    updateCatalog(Number(id), Date.now(), title, false);
+    updateBriefList(Number(id), Date.now(), title, false);
   });
 }
 
@@ -189,17 +196,19 @@ export async function getSidebarInfo() {
 
 /** Restore todo */
 export function restoreTodo(id: string) {
-  update<TodoBriefList>(todoRecycleListKey, prevInfoList => {
-    if (!prevInfoList) {
-      return [];
-    }
-    return prevInfoList.filter(info => info.createdTime !== Number(id));
-  });
-  get<Todo>(todoPrefix + id).then(todo => {
-    if (!todo) {
-      return;
-    }
-    const { createdTime, modifiedTime, title } = todo;
-    updateCatalog(createdTime, modifiedTime, title, true);
-  });
+  return Promise.all([
+    update<TodoBriefList>(todoRecycleListKey, prevInfoList => {
+      if (!prevInfoList) {
+        return [];
+      }
+      return prevInfoList.filter(info => info.createdTime !== Number(id));
+    }),
+    get<Todo>(todoPrefix + id).then(todo => {
+      if (!todo) {
+        return;
+      }
+      const { createdTime, modifiedTime, title } = todo;
+      return updateBriefList(createdTime, modifiedTime, title, true);
+    }),
+  ]);
 }
