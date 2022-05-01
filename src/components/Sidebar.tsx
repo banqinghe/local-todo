@@ -1,10 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { IconPlus, IconChecklist, IconDelete } from '@/icons';
-import { Link, useLocation } from 'react-router-dom';
-import { deleteTodo, getSidebarInfo, restoreTodo } from '@/utils';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { deleteTodo, restoreTodo } from '@/utils';
 import TodoInfoListItem from '@/components/TodoInfoListItem';
 import TodoRecycleListItem from '@/components/TodoRecycleListItem';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { sidebarInfoState } from '@/recoil/atoms';
 import useUpdateSidebar from '@/hooks/useUpdateSidebar';
 
@@ -16,8 +16,9 @@ interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
   const { className, style } = props;
 
-  const [sidebarInfo, setSidebarInfo] = useRecoilState(sidebarInfoState);
+  const sidebarInfo = useRecoilValue(sidebarInfoState);
   const updateSidebar = useUpdateSidebar();
+  const navigate = useNavigate();
 
   const [activeKey, setActiveKey] = useState<string>('');
   const [showType, setShowType] = useState<'todo' | 'recycle'>('todo');
@@ -29,11 +30,23 @@ export default function Sidebar(props: SidebarProps) {
   }
 
   const handleDelete = (id: string) => {
-    deleteTodo(id).then(() => updateSidebar());
+    deleteTodo(id)
+      .then(() => updateSidebar())
+      .then(({ todoInfoList }) => {
+        if (todoInfoList.length) {
+          navigate('/' + todoInfoList[0].createdTime);
+          return;
+        } else {
+          navigate('/');
+        }
+      });
   };
 
   const handleRestore = (id: string) => {
-    restoreTodo(id).then(() => updateSidebar());
+    restoreTodo(id).then(() => {
+      updateSidebar();
+      navigate('/' + id);
+    });
   };
 
   const handleToggleShowType = () => {

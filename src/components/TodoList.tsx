@@ -1,11 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
-import { IconCheckboxBlank, IconCheckboxChecked, IconEdit } from '@/icons';
+import { useState, useEffect } from 'react';
+import { IconEdit } from '@/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTodo, toggleTodo } from '@/utils';
 import { IconBuild, IconLightBubble } from '@/icons';
-
 import { Todo } from '@/types';
 import useUpdateSidebar from '@/hooks/useUpdateSidebar';
+import TodoListItem from './TodoListItem';
 
 export default function TodoList() {
   const updateSidebar = useUpdateSidebar();
@@ -83,40 +83,13 @@ export default function TodoList() {
           </div>
         </div>
         {todo.todoList.map(({ content, checked }, index) => (
-          <div
+          <TodoListItem
             key={index}
-            flex="~ gap-3"
-            align="items-start"
-            bg="hover:light-500"
-            p="x-2"
-            border="rounded"
-            selection="bg-yellow-200"
-          >
-            <label
-              text="2xl gray-500"
-              flex="~"
-              align="items-center"
-              style={{ height: '1.75rem' }}
-              cursor="pointer"
-            >
-              <input
-                type="checkbox"
-                display="hidden"
-                onChange={() => handleCheckboxClick(index)}
-              />
-              {checked ? (
-                <IconCheckboxChecked />
-              ) : (
-                <IconCheckboxBlank className="text-gray-300" />
-              )}
-            </label>
-            <p
-              font="leading-7"
-              className={checked ? 'opacity-30 line-through' : ''}
-            >
-              {content}
-            </p>
-          </div>
+            content={content}
+            checked={checked}
+            index={index}
+            onCheck={handleCheckboxClick}
+          />
         ))}
       </div>
     </div>

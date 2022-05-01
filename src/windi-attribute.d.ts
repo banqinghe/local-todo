@@ -23,6 +23,7 @@ declare module 'react' {
     'min-h'?: string;
     'max-h'?: string;
     flex?: string;
+    gap?: string;
     grid?: string;
     table?: string;
     order?: string;

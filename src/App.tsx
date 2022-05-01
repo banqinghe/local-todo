@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
-import Todo from '@/components/Todo';
+import Main from '@/components/Main';
 import useUpdateSidebar from './hooks/useUpdateSidebar';
 
 export default function App() {
@@ -22,7 +22,7 @@ export default function App() {
       <Header />
       <div flex="~ 1" style={{ height: 'calc(100vh - 53px)' }}>
         <Sidebar className="hidden md:flex md:w-42 lg:w-52" />
-        <Todo className="flex-1 h-full" />
+        <Main className="flex-1 h-full" />
       </div>
     </div>
   );

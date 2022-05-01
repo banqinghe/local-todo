@@ -10,3 +10,4 @@ export { default as IconLightBubble } from './IconLightBubble';
 export { default as IconPlus } from './IconPlus';
 export { default as IconRestore } from './IconRestore';
 export { default as IconSave } from './IconSave';
+export { default as IconRightArrow } from './IconRightArrow';
