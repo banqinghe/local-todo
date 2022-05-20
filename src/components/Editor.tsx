@@ -45,6 +45,7 @@ export default function Editor() {
     textAreaRef.current!.style.height = 'auto';
     textAreaRef.current!.style.height =
       textAreaRef.current!.scrollHeight + 'px';
+    textAreaRef.current!.scrollIntoView({ block: 'end' });
   };
 
   const handleValueChange = () => {
