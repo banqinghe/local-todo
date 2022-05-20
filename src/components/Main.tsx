@@ -1,6 +1,8 @@
-import Editor from '@/components/Editor';
-import TodoList from '@/components/TodoList';
+import Editor from './Editor';
+import TodoList from './TodoList';
 import Default from './Default';
+import TodoInfoList from './TodoInfoList';
+import TodoRecycleList from './TodoRecycleList';
 import { Routes, Route } from 'react-router-dom';
 
 interface TodoProps {
@@ -18,6 +20,8 @@ export default function Main(props: TodoProps) {
         <Route path="/:id" element={<TodoList />} />
         <Route path="/new" element={<Editor />} />
         <Route path="/modify/:id" element={<Editor />} />
+        <Route path="/list" element={<TodoInfoList />} />
+        <Route path="/deleted" element={<TodoRecycleList />} />
       </Routes>
     </main>
   );

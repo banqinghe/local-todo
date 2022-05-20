@@ -93,7 +93,7 @@ export default function Editor() {
           <IconSave className="text-2xl p-0.5 rounded cursor-pointer hover:bg-gray-100" />
         </div>
       </div>
-      <div w="8/12" m="x-auto" p="y-6">
+      <div w="10/12 sm:8/12" m="x-auto" p="y-6">
         <textarea
           ref={textAreaRef}
           id="todo-content-editor"

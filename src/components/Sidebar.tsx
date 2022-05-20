@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IconPlus, IconChecklist, IconDelete } from '@/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { deleteTodo, restoreTodo } from '@/utils';
+import { deleteTodo, restoreTodo, isNarrowScreen } from '@/utils';
 import TodoInfoListItem from '@/components/TodoInfoListItem';
 import TodoRecycleListItem from '@/components/TodoRecycleListItem';
 import { useRecoilValue } from 'recoil';
@@ -33,9 +33,10 @@ export default function Sidebar(props: SidebarProps) {
     deleteTodo(id)
       .then(() => updateSidebar())
       .then(({ todoInfoList }) => {
-        if (todoInfoList.length) {
+        if (isNarrowScreen() && todoInfoList.length) {
+          navigate('/list');
+        } else if (todoInfoList.length) {
           navigate('/' + todoInfoList[0].createdTime);
-          return;
         } else {
           navigate('/');
         }

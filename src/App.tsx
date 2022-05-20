@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Main from '@/components/Main';
+import FooterNav from '@/components/FooterNav';
 import useUpdateSidebar from './hooks/useUpdateSidebar';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <Sidebar className="hidden md:flex md:w-42 lg:w-52" />
         <Main className="flex-1 h-full" />
       </div>
+      <FooterNav />
     </div>
   );
 }

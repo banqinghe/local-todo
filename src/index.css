@@ -12,3 +12,11 @@
   width: 0px;
   background: #f9f9f9;
 }
+
+.thin-x-scrollbar::-webkit-scrollbar {
+  height: 0;
+}
+
+a {
+  -webkit-tap-highlight-color: transparent;
+}

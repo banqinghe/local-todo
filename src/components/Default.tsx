@@ -43,6 +43,7 @@ export default function Default() {
         position="relative top-3/12"
         flex="~ col sm:row"
         p="x-8 sm:0"
+        m="-t-30 sm:0"
         justify="center"
         align="items-stretch"
         gap="4 sm:16"

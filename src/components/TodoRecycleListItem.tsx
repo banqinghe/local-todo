@@ -14,14 +14,15 @@ export default function TodoRecycleListItem(props: TodoRecycleListItemProps) {
       position="relative"
       flex="~"
       align="items-center"
-      w="full"
       bg="hover:light-300"
+      border="b-1 sm:b-0"
       cursor="pointer"
       title={info.title}
+      overflow="x-auto"
       className="group"
     >
-      <div w="full" p="x-6 y-2">
-        <div text="sm gray-700 truncate" m="b-1">
+      <div w="full" p="x-6 y-3 sm:y-2">
+        <div text="base sm:sm gray-700 truncate" m="b-1">
           {info.title}
         </div>
         <div text="gray-500 xs">
@@ -30,10 +31,11 @@ export default function TodoRecycleListItem(props: TodoRecycleListItemProps) {
       </div>
       <div
         position="absolute right-2"
-        text="gray-400 hover:gray-600"
-        title="restore"
-        display="hidden"
+        display="block sm:hidden"
+        p="4 sm:x-0"
+        text="gray-400 hover:gray-600 text-xl sm:text-base"
         group-hover="block"
+        title="restore"
         onClick={() => handleRestore(info.createdTime.toString())}
       >
         <IconRestore />
