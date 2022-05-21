@@ -27,7 +27,11 @@ export default function Editor() {
     const lines = text
       .split('\n')
       .filter(line => line.startsWith('# ') || line.startsWith('- '));
-    const title = lines[0].replace(/^#\s/, '').trim();
+
+    let title = 'Untitled';
+    if (lines.length && lines[0].startsWith('# ')) {
+      title = lines[0].replace(/^#\s/, '').trim();
+    }
     const todoList = lines
       .slice(1)
       .map(line => line.replace(/^-\s/, '').trim());
