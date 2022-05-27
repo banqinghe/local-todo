@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "tsc && vite build && tsx ./scripts/build-sw.ts",
+    "preview": "vite preview",
+    "sw": "tsx ./scripts/build-sw.ts"
   },
   "dependencies": {
     "@types/node": "^17.0.23",
@@ -20,9 +21,14 @@
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
     "@vitejs/plugin-react": "^1.0.7",
+    "esbuild": "^0.14.40",
     "typescript": "^4.5.4",
     "vite": "^2.8.0",
     "vite-plugin-windicss": "^1.8.3",
-    "windicss": "^3.5.1"
+    "windicss": "^3.5.1",
+    "workbox-build": "^6.5.3",
+    "workbox-precaching": "^6.5.3",
+    "workbox-routing": "^6.5.3",
+    "workbox-strategies": "^6.5.3"
   }
 }
