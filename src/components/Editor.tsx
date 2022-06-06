@@ -17,6 +17,7 @@ export default function Editor() {
   const updateSidebar = useUpdateSidebar();
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const textRulerRef = useRef<HTMLTextAreaElement>(null);
 
   const navigate = useNavigate();
   const id = useParams().id;
@@ -46,10 +47,10 @@ export default function Editor() {
   };
 
   const resizeTextArea = () => {
-    textAreaRef.current!.style.height = 'auto';
-    textAreaRef.current!.style.height =
-      textAreaRef.current!.scrollHeight + 'px';
-    textAreaRef.current!.scrollIntoView({ block: 'end' });
+    const textArea = textAreaRef.current!;
+    const textRuler = textRulerRef.current!;
+    textRuler.value = textArea.value;
+    textArea.style.height = textRuler.scrollHeight + 'px';
   };
 
   const handleValueChange = () => {
@@ -68,23 +69,31 @@ export default function Editor() {
   };
 
   useEffect(() => {
+    const textArea = textAreaRef.current!;
+    const textRuler = textRulerRef.current!;
+    const textAreaStyle = window.getComputedStyle(textArea);
+    textRuler.style.width = textAreaStyle.width;
+  }, []);
+
+  useEffect(() => {
+    const textArea = textAreaRef.current!;
     if (isModify) {
       getTodo(id).then(todo => {
         if (!todo) {
           return;
         }
-        textAreaRef.current!.value =
+        textArea.value =
           '# ' +
           todo.title +
           '\n\n' +
           todo.todoList.map(({ content }) => '- ' + content).join('\n\n');
         resizeTextArea();
-        textAreaRef.current!.focus();
+        textArea.focus();
       });
     } else {
-      textAreaRef.current!.value = textareaExample;
+      textArea.value = textareaExample;
       resizeTextArea();
-      textAreaRef.current!.focus();
+      textArea.focus();
     }
 
     window.addEventListener('keydown', handleKeyDown);
@@ -98,18 +107,24 @@ export default function Editor() {
           <IconSave className="text-2xl p-0.5 rounded cursor-pointer hover:bg-gray-100" />
         </div>
       </div>
-      <div w="10/12 sm:8/12" m="x-auto" p="y-6">
+      <div position="relative" w="10/12 sm:8/12" m="x-auto" p="y-6">
         <textarea
           ref={textAreaRef}
-          id="todo-content-editor"
           resize="none"
           outline="none"
           autoComplete="off"
           w="full"
           bg="light-50"
           onChange={handleValueChange}
-          overflow="hidden"
-          font="leading-5 "
+          font="leading-5 sans"
+        />
+        <textarea
+          ref={textRulerRef}
+          position="absolute top-6"
+          rows={1}
+          display="block invisible"
+          font="leading-5 sans"
+          bg="light-400"
         />
       </div>
     </div>
