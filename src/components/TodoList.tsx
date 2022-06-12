@@ -29,6 +29,7 @@ export default function TodoList() {
       const prevList = prevTodo.todoList;
       return {
         ...prevTodo,
+        modifiedTime: Date.now(),
         todoList: prevList.map((item, index) => {
           if (index === targetIndex) {
             return { ...item, checked: !item.checked };

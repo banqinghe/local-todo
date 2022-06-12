@@ -142,9 +142,9 @@ export function getTodo(id: string) {
 /**
  * Toggle a todo item status
  */
-export function toggleTodo(id: string, targetIndex: number) {
+export async function toggleTodo(id: string, targetIndex: number) {
   let title = '';
-  return update<Todo>(todoPrefix + id, prevStore => {
+  await update<Todo>(todoPrefix + id, prevStore => {
     if (prevStore === undefined) {
       return {
         title,
@@ -166,11 +166,11 @@ export function toggleTodo(id: string, targetIndex: number) {
 
     return {
       ...prevStore,
+      modifiedTime: Date.now(),
       todoList: newTodoList,
     };
-  }).then(() => {
-    updateBriefList(Number(id), Date.now(), title, false);
   });
+  updateBriefList(Number(id), Date.now(), title, false);
 }
 
 /**
